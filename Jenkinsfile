@@ -1,54 +1,26 @@
 pipeline {
     agent any
-
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-        
         stage('Build') {
             steps {
-                script {
-                    sh 'g++ -o PES2UG22CS548-1 hello.cpp'
-                }
+                build 'PES2UG22CS548-1'
+                sh 'g++ main.cpp -o output'
             }
         }
-
         stage('Test') {
             steps {
-                script {
-                    sh './PES2UG22CS548-1'
-                }
+                sh './output'
             }
         }
-
         stage('Deploy') {
             steps {
-                script {
-                    sh 'git config --global user.name "shweta"'
-                    sh 'git config --global user.email "guddirn07@gmail.com"'
-                    sh 'git checkout -B main origin/main'
-                    sh 'git add -A'
-                    sh 'git commit -m "Added hello.cpp file" || echo "No changes to commit"'
-                }
-            }
-        }
-
-        stage('Post Actions') {
-            steps {
-                echo "Pipeline completed successfully"
+                echo 'deploy'
             }
         }
     }
-
     post {
-        success {
-            echo "Build and deployment successful!"
-        }
         failure {
-            echo "Pipeline failed"
-        }
-    }
+            error 'Pipeline failed'
+        }
+    }
 }
